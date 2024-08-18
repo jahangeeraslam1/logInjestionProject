@@ -1,106 +1,76 @@
-# 🚀 Event-Driven Log Ingestion System
+# 🚀SIEM Log Ingestion
 
 ## Simulating the Pulse of Modern SIEM Architecture
 
-![Project Banner](https://via.placeholder.com/1200x300.png?text=Event-Driven+Log+Ingestion+System)
-
 ## 🌟 Overview
 
-Welcome to the Event-Driven Log Ingestion System! This project is a testament to the power of modern SIEM (Security Information and Event Management) architectures. By leveraging an event-driven approach, we've created a system that simulates log capturing and ingestion with the efficiency and scalability demanded by today's cybersecurity landscape.
+Let's be hoenst, injesting logs from multiple data sources into a SIEM can be a challenging task within SIEM migrations...
 
-> "The only way to do great work is to love what you do." - Steve Jobs
+You need to identify all the data soruces within the organisation, collate a list of every single log type, figure out how you are going to handle migration of threat detection rules, its a sticky one. 
 
-And we love building robust, scalable systems that push the boundaries of log management and security analytics!
+I've created this github repo to outline some of the methods which can be leveraged for log injestion into your new SIEM. 
 
-## 🏗️ The Architecture Journey
+> *Disclaimer: The code, logic, and explanations provided here are based on my personal opinion and understanding. While I believe the information to be accurate, I make no guarantees regarding its correctness or completeness. I am not liable for any issues that may arise from using this knowledge*
 
-### 1. 📝 Log Generator: The Heartbeat
+## 🌟 GoogleSecOps
 
-We began our journey by creating a log generator - the pulse of our system. This component simulates the constant flow of log data in a real-world environment.
+Working with GoogleSecOps(formerly Chronicle SIEM) for this project,
+typically (in my opinion) there are 4 ways to get your logs into Chronicle SIEM. 
 
-**Key Features:**
-- Generates diverse log types (INFO, WARNING, ERROR, DEBUG)
-- Produces randomized, realistic log messages
-- Timestamps each log entry for accurate chronological tracking
+**Injestion Methods**
+- Direct Injestion from GCP
+- Chronicle Forwarders/Collectors
+- GCP Injestion API
+- Cloud Bucket Sync
 
-### 2. 🔄 Redis: The Nerve Center
+In this repo, we're gonna foucs on **GCP Injestion API** and **Cloud Bucket Sync**.
 
-Recognizing the need for a robust, real-time message broker, we integrated Redis into our architecture.
+Before that happens, we first need to get farmiliar with **event driven arechitecture** which is popularly used for sending logs to most SIEMS. 
 
-**Why Redis?**
-- Lightning-fast in-memory data structure store
-- Pub/Sub capabilities for real-time event propagation
-- Scalability to handle high-volume log streams
 
-### 3. 👀 Log Watcher: The Vigilant Observer
+Have a look at this repo in the following order to understand Log Injestion into Chornicle SIEM. 
 
-To capture log changes in real-time, we implemented a log watcher using the watchdog library.
+ phase1-event-driven-archiecture
 
-**Watchdog's Superpowers:**
-- File system event monitoring
-- Cross-platform compatibility
-- Efficient, event-driven architecture
+ - explains event driven arechitecutre concepts and why it is useful for SIEM log injestion
 
-### 4. 📡 Log Subscriber: The Intelligent Processor
+ phase2-log-injestion-setup
 
-The log subscriber listens to the Redis channels, ready to process and forward logs as they arrive.
+ - creates sample logs to work with
+ - sets up a watcher to watch the log file and record changes
+ - Publishes changes to the REDIS 
+ - Creates subscriber to rertieve logs from REDIS
 
-**Subscriber Strengths:**
-- Real-time log consumption
-- Flexible processing capabilities
-- Scalable to handle multiple log streams
+ phase3-gcs-and-terraform
+ - set up GCS bucket via Terraform to hold our logs
+ - create workflow to auto send logs to this gcp bucket 
 
-### 5. ☁️ GCS Integration: Elevating to the Cloud
+ **LOGS READY FOR CHRONICLE VIA "Direct Injestion from GCP"**
 
-Taking our system to the next level, we integrated Google Cloud Storage (GCS) for durable, scalable log storage.
+ phase4-adding-fault-tolerance
+ - accounts for what happens when log watcher goes offline
+ - determines and how it handles logs missed
+ - ensures duplicate logs are not processed 
 
-#### 5.1 🏗️ Terraform: Infrastructure as Code
+ phase5-leveraging-gcp-pub-sub
+ - switches from using REDIS to Google Pub/Sub 
+ - sets up Google Pub/Sub pipelines via Terraform
+ - sends logs from subscriber to GCS in batches
 
-We used Terraform to provision our GCS bucket, embracing the philosophy of Infrastructure as Code.
+  phase5-using-injestion-API 
+ - leverages Google Pub/Sub to send logs to chornicle using Injestion API
+ - covers API set up + authentication
 
-```hcl
-resource "google_storage_bucket" "log_bucket" {
-  name     = "our-log-ingestion-bucket"
-  location = "US"
-}
-```
-
-#### 5.2 🔧 Code Modification: Bridging Local and Cloud
-
-We enhanced our log subscriber to seamlessly upload processed logs to GCS, creating a hybrid local-cloud architecture.
-
-## 🎯 Key Takeaways
-
-- **Event-Driven Architecture**: Ensures real-time processing and scalability
-- **Cloud Integration**: Leverages GCS for durable, accessible log storage
-- **Infrastructure as Code**: Uses Terraform for reproducible, version-controlled infrastructure
-- **Modular Design**: Allows for easy extensions and modifications
 
 ## 🚀 Getting Started
 
 1. Clone the repository
-2. Set up your Google Cloud credentials
-3. Run `terraform apply` to create your GCS bucket
+2. Set up your Google Cloud credentials in your CLI
 4. Install dependencies: `pip install -r requirements.txt`
 5. Start the log generator: `python log_generator.py`
 6. Launch the log watcher: `python log_watcher.py`
 7. Run the log subscriber: `python log_subscriber.py`
 
-## 🌈 Future Horizons
+## 
 
-The journey doesn't end here! Future enhancements could include:
-- Kubernetes deployment for scalability
-- Machine learning integration for anomaly detection
-- Real-time dashboarding with tools like Grafana
-
-> "Innovation distinguishes between a leader and a follower." - Steve Jobs
-
-Let's innovate, let's lead, and let's push the boundaries of what's possible in log management and security analytics!
-
-## 🤝 Contributing
-
-We believe in the power of community. Feel free to fork, star, and contribute to this project. Together, we can build something truly revolutionary!
-
----
-
-Built with ❤️ by [Your Name/Team]
+Built with ❤️ by [Jag Aslam]

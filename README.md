@@ -18,48 +18,56 @@ Working with GoogleSecOps(formerly Chronicle SIEM) for this project,
 typically (in my opinion) there are 4 ways to get your logs into Chronicle SIEM. 
 
 **Injestion Methods**
-- Direct Injestion from GCP
-- Chronicle Forwarders/Collectors
-- GCP Injestion API
-- Cloud Bucket Sync
+### Direct Injestion from GCP
+- test5
+### Chronicle Forwarders/Collectors
+- test4
+### GCP Injestion API
+- test3
+### Cloud Bucket Sync
+- test
 
 In this repo, we're gonna foucs on **GCP Injestion API** and **Cloud Bucket Sync**.
-
-Before that happens, we first need to get farmiliar with **event driven arechitecture** which is popularly used for sending logs to most SIEMS. 
 
 
 Have a look at this repo in the following order to understand Log Injestion into Chornicle SIEM. 
 
- phase1-event-driven-archiecture
-
+ phase1
+ 
  - explains event driven arechitecutre concepts and why it is useful for SIEM log injestion
 
- phase2-log-injestion-setup
-
+ phase2+3 
+ 
+ 2. log injestion setup
  - creates sample logs to work with
  - sets up a watcher to watch the log file and record changes
  - Publishes changes to the REDIS 
  - Creates subscriber to rertieve logs from REDIS
 
- phase3-gcs-and-terraform
+3. adding fault tolerance
+ - accounts for what happens when log watcher goes offline
+ - determines and how it handles logs missed
+ - ensures duplicate logs are not processed 
+ 
+ phase4
  - set up GCS bucket via Terraform to hold our logs
  - create workflow to auto send logs to this gcp bucket 
 
  **LOGS READY FOR CHRONICLE VIA "Direct Injestion from GCP"**
 
- phase4-adding-fault-tolerance
- - accounts for what happens when log watcher goes offline
- - determines and how it handles logs missed
- - ensures duplicate logs are not processed 
-
- phase5-leveraging-gcp-pub-sub
+ phase5a
+ 
  - switches from using REDIS to Google Pub/Sub 
  - sets up Google Pub/Sub pipelines via Terraform
  - sends logs from subscriber to GCS in batches
 
-  phase5-using-injestion-API 
- - leverages Google Pub/Sub to send logs to chornicle using Injestion API
+phase5b
+ 
+ - switches from using REDIS to Google Pub/Sub 
+ - sets up Google Pub/Sub pipelines via Terraform
+ - sends logs from subscriber to Injestion API
  - covers API set up + authentication
+
 
 
 ## 🚀 Getting Started

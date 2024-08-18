@@ -12,7 +12,7 @@ class LogHandler(FileSystemEventHandler): #LogHandler class extends FleSystemEve
     def __init__(self):
         self.checkpoint_handler = CheckpointHandler("log_checkpoint.txt")
         self.redis_client = redis.Redis(host="localhost", port=6379, db=0)
-        self.last_processed_position = self.checkpoint_handler.last_position
+        self.last_processed_position = self.checkpoint_handler.last_position # keeps track of postion where log were last processed
 
         
     def on_modified(self, event): #code called when the log file is changed
@@ -20,37 +20,34 @@ class LogHandler(FileSystemEventHandler): #LogHandler class extends FleSystemEve
             self.process_new_logs(event.src_path) #calls process new logs method on our path where app.log is stored
             
     def process_new_logs(self, file_path):
-        with open(file_path, 'r') as file:
-            print("opened file")
-            file.seek(self.checkpoint_handler.last_position) #looks at where we last left off based on the number in the chekpoint_text fle
-            print("got checkpoint from file")
-            # new_logs = file.read() #reads all new logs from last checkpoint
-            # current_position = file.tell() #records new position once it has all been read
-            
         
-            # for log_line in new_logs.strip().split('\n'):  #strip to remove new lines, split to divide the string into a list of sub-strings
-
-            #     if log_line: #ensures the code only processes non empty log lines -> avoids empty string errors
-            #         log_entry = json.loads(log_line) #converts to JSON format
-            #         self.publish_log(log_entry) #publishes single log to REDIS event broker
-            #         self.checkpoint_handler.update_position(current_position) #updates checkpoint.txt file with current read position
-           
-            print("about to read logs")
-            while True: 
-                print("reading logs")
-                log_line = file.readline() #progress through new logs one at a time
-                if not log_line: # if no new logs then break - HERE IS THE ISSUE
-                    print("breaking ou the loop")
-                    break
+        with open(file_path, 'r') as file:
+            print("Opened file")
+            file.seek(self.last_processed_position) #looks at where we last left off based on the number in the chekpoint_text fle
+            print(f"Seeking to last processed position: {self.last_processed_position}")
+            
+          
+            new_logs = file.read() #reads from where we last processed
+            
+            
+            if new_logs: #only runs if new logs exist since we last processed
+                print(f"Read {len(new_logs)} bytes of new log data")
                 
-                log_line = log_line.strip() #strip => removes new lines 
-                if log_line: #ensures the code only processes non empty log lines -> avoids empty string errors
-                    print ("checked log not empty")
-                    log_entry = json.loads(log_line) #convert to JSO
-                    self.publish_log(log_entry) #publish log to REDIS event broker
-                    
+                for log_line in new_logs.splitlines():
+                    if log_line: #ensures the code only processes non empty log lines -> avoids empty string errors
+                        print("Processing log line")
+                        log_entry = json.loads(log_line) #convert to JSON
+                        self.publish_log(log_entry) #publish log to REDIS event broker
+                 
+                 
+                        
                 current_position = file.tell() #update current position after publishing the log 
+              
+               #update both checkpoint and last processed position to ensure we dont miss any logs between file modifcations
                 self.checkpoint_handler.update_position(current_position)
+                self.last_processed_position = current_position
+                         
+                print(f"Updated checkpoint to position: {current_position}")
                 
             
                     

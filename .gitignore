@@ -124,3 +124,9 @@ Thumbs.db
 *.bak
 *.tmp
 *.temp
+
+
+#my files to ignore
+app.log
+dump.rdb
+log_checkpoint.txt

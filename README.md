@@ -1,8 +1,6 @@
-# 🚀SIEM Log Ingestion
+# 🚀 SIEM Log Ingestion
 
-## Simulating the Pulse of Modern SIEM Architecture
-
-## 🌟 Overview
+## 🌟 Project Overview
 
 Let's be hoenst, injesting logs from multiple data sources into a SIEM can be a challenging task within SIEM migrations...
 
@@ -18,50 +16,54 @@ Working with GoogleSecOps(formerly Chronicle SIEM) for this project,
 typically (in my opinion) there are 4 ways to get your logs into Chronicle SIEM. 
 
 **Injestion Methods**
-### Direct Injestion from GCP
+### A. Direct Injestion from GCP
 - test5
-### Chronicle Forwarders/Collectors
+### B. Chronicle Forwarders/Collectors
 - test4
-### GCP Injestion API
+### C. GCP Injestion API
 - test3
-### Cloud Bucket Sync
+### D. Cloud Bucket Sync
 - test
 
-In this repo, we're gonna foucs on **GCP Injestion API** and **Cloud Bucket Sync**.
+In this repo, we're gonna foucs on **C. GCP Injestion API** and **D. Cloud Bucket Sync**. 
 
+**Direct Injestion from GCP** and **Chronicle Forwarders/Collectorsc** will be covered in another repo soon. 
 
-Have a look at this repo in the following order to understand Log Injestion into Chornicle SIEM. 
+## Repo Guide
 
- phase1
+Have a look at this repo in the following order to grasp how to undertake Log Injestion into Chornicle SIEM. 
+
+ #### section1 - Event Driven Architecture  
  
  - explains event driven arechitecutre concepts and why it is useful for SIEM log injestion
 
- phase2+3 
+ #### section2 - REDIS Log Gathering System 
  
- 2. log injestion setup
+ section2a: log injestion setup
  - creates sample logs to work with
  - sets up a watcher to watch the log file and record changes
  - Publishes changes to the REDIS 
  - Creates subscriber to rertieve logs from REDIS
 
-3. adding fault tolerance
+ section2b: adding fault tolerance
  - accounts for what happens when log watcher goes offline
  - determines and how it handles logs missed
  - ensures duplicate logs are not processed 
- 
- phase4
+
+
+ #### section3 - REDIS Log Gathering System with GCS 
+
  - set up GCS bucket via Terraform to hold our logs
  - create workflow to auto send logs to this gcp bucket 
 
- **LOGS READY FOR CHRONICLE VIA "Direct Injestion from GCP"**
 
- phase5a
+### section4 - Google Pub/Sub Log Gathering System with GCS 
  
  - switches from using REDIS to Google Pub/Sub 
  - sets up Google Pub/Sub pipelines via Terraform
  - sends logs from subscriber to GCS in batches
 
-phase5b
+### section5 - Google Pub/Sub Log Gathering System with Injestion API 
  
  - switches from using REDIS to Google Pub/Sub 
  - sets up Google Pub/Sub pipelines via Terraform
@@ -72,12 +74,16 @@ phase5b
 
 ## 🚀 Getting Started
 
-1. Clone the repository
+1. Clone the repo
 2. Set up your Google Cloud credentials in your CLI
+3. Create virtual envrioement (reccomended but optional)
 4. Install dependencies: `pip install -r requirements.txt`
 5. Start the log generator: `python log_generator.py`
 6. Launch the log watcher: `python log_watcher.py`
 7. Run the log subscriber: `python log_subscriber.py`
+
+> *Don't forget to launch the redis-server when working with section1,section2 and section3 and update auth/port details if needed*
+
 
 ## 
 

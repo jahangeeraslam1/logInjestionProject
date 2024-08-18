@@ -4,26 +4,55 @@ from watchdog.events import FileSystemEventHandler #base class -> handles file s
 import json
 import redis
 
+from checkpoint import CheckpointHandler #import the class created in checkpoint.py file
+
+
+
 class LogHandler(FileSystemEventHandler): #LogHandler class extends FleSystemEventHandler to handle file modifcations.
     def __init__(self):
-        self.last_position = 0 #keeps track of where it previously read so we start it at 0
+        self.checkpoint_handler = CheckpointHandler("log_checkpoint.txt")
         self.redis_client = redis.Redis(host="localhost", port=6379, db=0)
+        self.last_processed_position = self.checkpoint_handler.last_position
+
         
     def on_modified(self, event): #code called when the log file is changed
         if event.src_path.endswith("app.log"):
-            self.process_new_logs(event.src_path) #calls process new logs method on our 
+            self.process_new_logs(event.src_path) #calls process new logs method on our path where app.log is stored
             
     def process_new_logs(self, file_path):
         with open(file_path, 'r') as file:
-            file.seek(self.last_position) #looks at where we last left off 
-            new_logs = file.read() #reads all new content
-            self.last_position = file.tell() #updates last read till position to be used next time on_modified is called
+            print("opened file")
+            file.seek(self.checkpoint_handler.last_position) #looks at where we last left off based on the number in the chekpoint_text fle
+            print("got checkpoint from file")
+            # new_logs = file.read() #reads all new logs from last checkpoint
+            # current_position = file.tell() #records new position once it has all been read
+            
         
-            for log_line in new_logs.strip().split('\n'):  #strip to remove new lines, split to divide the string into a list of sub-strings
+            # for log_line in new_logs.strip().split('\n'):  #strip to remove new lines, split to divide the string into a list of sub-strings
 
-                if log_line: #ensures the code only processes non empty log lines -> avoids JSON loads to occur on an empty string
-                    log_entry = json.loads(log_line) #converts sub-strings to JSON format
-                    self.publish_log(log_entry)
+            #     if log_line: #ensures the code only processes non empty log lines -> avoids empty string errors
+            #         log_entry = json.loads(log_line) #converts to JSON format
+            #         self.publish_log(log_entry) #publishes single log to REDIS event broker
+            #         self.checkpoint_handler.update_position(current_position) #updates checkpoint.txt file with current read position
+           
+            print("about to read logs")
+            while True: 
+                print("reading logs")
+                log_line = file.readline() #progress through new logs one at a time
+                if not log_line: # if no new logs then break - HERE IS THE ISSUE
+                    print("breaking ou the loop")
+                    break
+                
+                log_line = log_line.strip() #strip => removes new lines 
+                if log_line: #ensures the code only processes non empty log lines -> avoids empty string errors
+                    print ("checked log not empty")
+                    log_entry = json.loads(log_line) #convert to JSO
+                    self.publish_log(log_entry) #publish log to REDIS event broker
+                    
+                current_position = file.tell() #update current position after publishing the log 
+                self.checkpoint_handler.update_position(current_position)
+                
+            
                     
     def publish_log(self, log_entry): 
         channel = f"logs:{log_entry['type']})"

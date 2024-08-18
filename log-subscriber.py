@@ -12,7 +12,7 @@ def setup_gcs_client():
 def upload_to_gcs(client, bucket_name, log_entry):
     bucket = client.bucket(bucket_name) # tells client which bucket we are working with 
     
-    blob_name = f"logs2/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{random.randint(1, 1000)}.json" #name of file
+    blob_name = f"logs6/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{random.randint(1, 1000)}.json" #name of file
     
     blob = bucket.blob(blob_name) #creates new blob object with the name we made -> blob = a file in GCS.
     

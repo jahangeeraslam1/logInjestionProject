@@ -33,11 +33,11 @@ In this repo, we're gonna foucs on **C. GCP Injestion API** and **D. Cloud Bucke
 
 Have a look at this repo in the following order to grasp how to undertake Log Injestion into Chornicle SIEM. 
 
- #### section1 - Event Driven Architecture  
+#### section1 - Event Driven Architecture  
  
  - explains event driven arechitecutre concepts and why it is useful for SIEM log injestion
 
- #### section2 - REDIS Log Gathering System 
+#### section2 - REDIS Log Gathering System 
  
  section2a: log injestion setup
  - creates sample logs to work with
@@ -51,7 +51,7 @@ Have a look at this repo in the following order to grasp how to undertake Log In
  - ensures duplicate logs are not processed 
 
 
- #### section3 - REDIS Log Gathering System with GCS 
+#### section3 - REDIS Log Gathering System with GCS 
 
  - set up GCS bucket via Terraform to hold our logs
  - create workflow to auto send logs to this gcp bucket 
@@ -61,12 +61,12 @@ Have a look at this repo in the following order to grasp how to undertake Log In
  
  - switches from using REDIS to Google Pub/Sub 
  - sets up Google Pub/Sub pipelines via Terraform
- - sends logs from subscriber to GCS in batches
+ - sends logs from subscriber to GCS bucket in batches
 
 ### section5 - Google Pub/Sub Log Gathering System with Injestion API 
  
- - switches from using REDIS to Google Pub/Sub 
- - sets up Google Pub/Sub pipelines via Terraform
+ - still uses Google Pub/Sub instead of REDIS
+ - leverages Terraform to set up Google Pub/Sub
  - sends logs from subscriber to Injestion API
  - covers API set up + authentication
 

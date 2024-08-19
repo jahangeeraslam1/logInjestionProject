@@ -8,7 +8,7 @@ import time
 
 
 class CheckpointHandler:
-    def __init__(self, checkpoint_file, max_logs_before_write=100, max_time_before_write=30):
+    def __init__(self, checkpoint_file, max_logs_before_write=50, max_time_before_write=2):
         #instance variables of class
   
         self.checkpoint_file = checkpoint_file

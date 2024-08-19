@@ -130,3 +130,6 @@ Thumbs.db
 app.log
 dump.rdb
 log_checkpoint.txt
+complex-chronicle-auth.py
+simple-chronicle-auth.py
+

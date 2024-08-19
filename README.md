@@ -15,7 +15,7 @@ I've created this github repo to outline some of the methods which can be levera
 Working with GoogleSecOps(formerly Chronicle SIEM) for this project,
 typically (in my opinion) there are 4 ways to get your logs into Chronicle SIEM. 
 
-###Injestion Methods 
+### Injestion Methods 
  - Direct Injestion from GCP
  - Chronicle Forwarders/Collectors
  - GCP Injestion API
@@ -23,10 +23,10 @@ typically (in my opinion) there are 4 ways to get your logs into Chronicle SIEM.
 
 In this repo, we're gonna foucs on **GCP Injestion API** and **Cloud Bucket Sync**. 
 
-###G CP Injestion API
-> * **GCP Injestion API** is when... *
+### GCP Injestion API
+> * **GCP Injestion API** is when..*
 ### Cloud Bucket Sync
-> * **Cloud Bucket Sync** is when... *
+> * **Cloud Bucket Sync** is when...*
 
 
 

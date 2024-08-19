@@ -1,6 +1,7 @@
 resource "google_storage_bucket" "logging_bucket"{
   name     = "section3-gcs-bucket"
   location = var.GCP_REGION
+  
 
   #enables terraform to destory it even if it contains objects (testing only)
   force_destroy = true

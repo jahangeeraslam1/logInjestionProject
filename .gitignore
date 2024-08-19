@@ -129,7 +129,8 @@ Thumbs.db
 #my files to ignore
 app.log
 dump.rdb
-log_checkpoint.txt
 complex-chronicle-auth.py
 simple-chronicle-auth.py
+log-watcher-checkpoint.txt
+test.tf
 

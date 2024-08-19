@@ -40,7 +40,7 @@ def main():
         log_entry = generate_log_entry()
         write_log_to_file(log_entry)
         print(f"Log entry written: {log_entry}")
-        time.sleep(3)  # Wait for 3 seconds before generating the next log
+        time.sleep(5)  # Wait for 5 seconds before generating the next log
 
 if __name__ == "__main__":
     main()

@@ -1,72 +1,79 @@
 import time
-from watchdog.observers import Observer #core class needed -> Observer watches a file for events
-from watchdog.events import FileSystemEventHandler #base class needed -> handles file system events 
+from watchdog.observers import Observer 
+from watchdog.events import FileSystemEventHandler
 import json
-import redis
 
-from checkpoint import CheckpointHandler #imports the class created in checkpoint.py file
+from google.cloud import pubsub_v1 #import Google Cloud Pub/Sub client library.
+
+from checkpoint import CheckpointHandler 
 
 class LogHandler(FileSystemEventHandler): 
     
     def __init__(self):
         self.checkpoint_handler = CheckpointHandler("log-watcher-checkpoint.txt")
-        self.redis_client = redis.Redis(host="localhost", port=6379, db=0)
-        self.last_processed_position = self.checkpoint_handler.last_position # keeps track of postion where log was last processed
+        self.last_processed_position = self.checkpoint_handler.last_position 
+        
+        #sets up the connection to Pub/Sub
+        self.publisher = pubsub_v1.PublisherClient() #create a pubsub client
+        self.topic_path = self.publisher.topic_path("chronicle-project-432815", "chronicle-injestion-topic")  #specifiy the topic we'll be publishing our messages to (REPLACES REDIS CHANNELS)
 
        
-    def on_modified(self, event): #method called each time the log file changes
+    def on_modified(self, event): 
         if event.src_path.endswith("app.log"):
-            self.process_new_logs(event.src_path) #calls process_new_logs method on the path of app.log.
+            self.process_new_logs(event.src_path) 
     
           
     def process_new_logs(self, file_path):
         with open(file_path, 'r') as file:
             
-            file.seek(self.last_processed_position) #identifies where the last processed log is, based on the value inside log-watcher-checkpoint.txt
+            file.seek(self.last_processed_position) 
             
             print(f"Seeking to last processed position: {self.last_processed_position}") #DEBUGGING STATEMENT
             
           
-            new_logs = file.read() #starts reading from where the log-watcher last processed
+            new_logs = file.read() 
             
             
-            if new_logs: #only runs if new logs exist since last processed
+            if new_logs:
                 
                 print(f"Read {len(new_logs)} bytes of new log data") #DEBUGGING STATEMENT
         
                 for log_line in new_logs.splitlines():
-                    if log_line: #ensures the code only processes non empty log lines (avoiding empty string errors)
+                    if log_line: 
                         print("Processing new log") #DEBUGGING STATEMENT
-                        log_entry = json.loads(log_line) #convert log from str to JSON (was read as str)
-                        self.publish_log(log_entry) #publish log to event broker
+                        log_entry = json.loads(log_line)
+                        self.publish_log(log_entry)
                  
-                #update variables publishing to event broker 
-                current_position = file.tell() # amend current prosition in file 
-               #update both checkpoint and last processed position to ensure we dont miss any logs between file modifcations
-                self.checkpoint_handler.update_position(current_position) #updated checkpoint_handler allowing it to either hold the checkpoint in memory or write to disk
-                self.last_processed_position = current_position #set last processed position to now
+                
+                current_position = file.tell() 
+              
+                self.checkpoint_handler.update_position(current_position) 
+                self.last_processed_position = current_position 
                          
-                print(f"Updated checkpoint to position: {current_position}")  #DEBUGGING STATEMENT
+                print(f"Updated checkpoint to position: {current_position}") #DEBUGGING STATEMENT
                 
             
                     
     def publish_log(self, log_entry): 
-        channel = f"logs:{log_entry['type']})" #create new REDIS channel for each log type
-        message = json.dumps(log_entry) 
-        self.redis_client.publish(channel, message)
-        print(f"Published to channel {channel} {message}")
+        data = json.dumps(log_entry).encode('utf-8') #convert to JSON then bytes since pub/sub requires bytes input
+        send = self.publisher.publish(self.topic_path, data)
+        send.result()  # Wait for the publish to complete
+        print(f"Published message to {self.topic_path} :  {log_entry}")
+        
         
         
 
 def main():
-        path = "."  # watch the current directory, replace with location of .log file in prod env
+    
+    
+        path = "."  
         event_handler = LogHandler()
         observer = Observer() 
-        observer.schedule(event_handler, path, recursive=False) #tells event_handler to use observer to watch the .log file  for changes
+        observer.schedule(event_handler, path, recursive=False) 
         observer.start()
         try:
             while True:
-                time.sleep(1) # watches for new logs every second -> added to avoid CPU drain
+                time.sleep(1)
         except KeyboardInterrupt:
             observer.stop()
         observer.join()

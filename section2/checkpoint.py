@@ -2,7 +2,7 @@
 #captures upto which point in the file logs have already been published to the event broker
 #avoids duplicate logs being sent to the messages broker -> hence avoids duplicates beign sent to GCS. 
 #without this functionality, each time the log-watcher is restarted it would sent all logs from the beginning of the file to the event broker
-# designed to ensure if the low watcher goes offline (even for a couple of secs), once back online it only publishes what it missed to the event broker, and not evertything.
+#designed to ensure if the low watcher goes offline (even for a couple of secs), once back online it only publishes what it missed to the event broker, and not evertything.
 
 import time
 

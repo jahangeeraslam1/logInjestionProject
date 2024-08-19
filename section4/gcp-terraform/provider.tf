@@ -13,6 +13,6 @@ provider "google" {
     zone = var.GCP_ZONE
 
     #AUTHENTICATION - done via GCP CLI 
-    # can run gcloud auth application-default login command in your CLI to authenticate
+    #run gcloud auth application-default login command in your CLI to authenticate
 
 }

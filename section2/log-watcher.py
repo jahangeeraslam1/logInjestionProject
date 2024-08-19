@@ -71,4 +71,5 @@ def main():
             observer.stop()
         observer.join()
              
-main()
+if __name__ == "__main__":
+    main()

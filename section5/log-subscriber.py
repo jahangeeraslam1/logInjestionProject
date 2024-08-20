@@ -1,74 +1,76 @@
 import json 
 from datetime import datetime 
-import random
+import time
 
-from google.cloud import storage
 from google.cloud import pubsub_v1
+from google.oauth2 import service_account
+from google.auth.transport.requests import AuthorizedSession
 
+# Constants
+SCOPES = ['https://www.googleapis.com/auth/malachite-ingestion']
+ING_SERVICE_ACCOUNT_FILE = '/path/to/your/service-account-key.json'
+CHRONICLE_INGESTION_URL = 'https://malachiteingestion-pa.googleapis.com/v2/projects/YOUR_PROJECT_ID/locations/YOUR_LOCATION/lake:batchCreateLogs'
 
-def setup_gcs_client():
-    return storage.Client()
+def create_authorized_session():
+    credentials = service_account.Credentials.from_service_account_file(
+        ING_SERVICE_ACCOUNT_FILE, 
+        scopes=SCOPES
+    )
+    return AuthorizedSession(credentials)
 
-def upload_to_gcs(client, bucket_name, log_entry):
-    bucket = client.bucket(bucket_name) 
+def send_to_chronicle(session, log_entry):
+    body = {
+        "customer_id": "YOUR_CUSTOMER_ID",
+        "log_type": "YOUR_LOG_TYPE",
+        "entries": [log_entry]
+    }
     
-    blob_name = f"logs/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{random.randint(1, 100)}.json" 
-    
-    blob = bucket.blob(blob_name)
-    
-    blob.upload_from_string(json.dumps(log_entry), content_type='application/json') #converts python object back to JSON
+    try:
+        response = session.post(CHRONICLE_INGESTION_URL, json=body)
+        response.raise_for_status()
+        print(f"Successfully sent log to Chronicle: {log_entry}")
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to send log to Chronicle. Error: {e}")
 
-    print(f"Uploaded log to gs://{bucket_name}/{blob_name}") #DEBUGGING
-    
-    
-def process_message(message, gcs_client, bucket_name):
-    log_entry = json.loads(message.data.decode('utf-8')) #decodes object from bytes, and transofrms it to python object e.g dictonary
-    parsed_log = parse_log(log_entry)
-    
-    upload_to_gcs(gcs_client, bucket_name, parsed_log)
-    #sends acknowledgement back to google pub/sub topic
-    message.ack()
-
+def process_message(message, chronicle_session):
+    try:
+        log_entry = json.loads(message.data.decode('utf-8'))
+        parsed_log = parse_log(log_entry)
+        send_to_chronicle(chronicle_session, parsed_log)
+        message.ack()
+    except json.JSONDecodeError as e:
+        print(f"Error decoding message: {e}")
+        message.nack()
+    except Exception as e:
+        print(f"Error processing message: {e}")
+        message.nack()
 
 def parse_log(log_entry):
-    
-    #CAN ADD log parsers here to parse log into correct format 
-    
-    #added a simple transfomation below to demonstrate functionality 
-    #this makes all the keys inside the JSON log uppercase.
-    uppercaseLog = {key.upper(): value for key, value in log_entry.items()}
-    
-
-    print(f"Parsed log: {uppercaseLog}") #DEBUGGING
-    
+    # You can add any necessary log parsing logic here
     return log_entry
-    
 
 def main():
+    subscriber = pubsub_v1.SubscriberClient()
+    subscription_path = subscriber.subscription_path("chronicle-project-432815", "chronicle-injestion_sub")
     
-    subscriber = pubsub_v1.SubscriberClient() #pub/sub subscriber client setup 
-    subscription_path = subscriber.subscription_path("chronicle-project-432815", "chronicle-injestion_sub") #define subscipriton path
+    print(f"Google Pub/Sub Subscriber started. Currently subscribed to {subscription_path}")
     
-    print(f"Google Pub Sub Subscriber started. Currently subscribed to {subscription_path}")
+    chronicle_session = create_authorized_session()
     
-    gcs_client = setup_gcs_client() 
-    bucket_name = "section4-gcs_bucket" 
-    
-    
-    #this starts a background thread that listens for messages on the subscription_path.
-    #callback basically runs the process_messsage function on each message recieved
-    
-    future = subscriber.subscribe(subscription_path, callback=lambda message: process_message(message, gcs_client, bucket_name))
+    def callback(message):
+        process_message(message, chronicle_session)
+
+    streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
+    print(f"Listening for messages on {subscription_path}")
 
     try:
-        future.result()
+        streaming_pull_future.result()
     except KeyboardInterrupt:
-        future.cancel()
-        
+        streaming_pull_future.cancel()
+        print("Subscriber is shutting down.")
+    finally:
+        subscriber.close()
+        chronicle_session.close()
+
 if __name__ == "__main__":
     main()
-            
-    
-    
-    
-    

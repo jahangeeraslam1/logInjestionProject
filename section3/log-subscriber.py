@@ -26,13 +26,13 @@ def upload_to_gcs(client, bucket_name, log_entry):
 def parse_log(gcs_client,bucket_name,log_entry):
     
     
-    #can add log parsers here to parse log into correct format 
-    #
-    #
-    print(f"Parsed log: {log_entry}")
+    uppercaseLog = {key.upper(): value for key, value in log_entry.items()}
+    
+
+    print(f"Parsed log: {uppercaseLog}") #DEBUGGING
     
     #call function to upload log to GCS 
-    upload_to_gcs(gcs_client, bucket_name, log_entry)
+    upload_to_gcs(gcs_client, bucket_name, uppercaseLog)
     
 
 def main():
@@ -46,7 +46,7 @@ def main():
     
     
     gcs_client = setup_gcs_client() #sets up gcs client for to send logs to gcs bucket 
-    bucket_name = "logging_bucket-448" #specifies bucket name to send logs to 
+    bucket_name = "section3-gcs-bucket" #specifies bucket name to send logs to 
     
      
     for msg in pubsub.listen():

@@ -13,7 +13,7 @@ In this section, I'll covered how to:
 
 ## Architeture
 
-![Image Alt text](images/section2-diagram.png)
+![Image Alt text](images/section2-diagram.png
 
 ## Repo Overview
 

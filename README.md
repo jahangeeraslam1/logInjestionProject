@@ -2,9 +2,9 @@
 
 ## 🌟 Project Overview
 
-Let's be hoenst, injesting logs from multiple data sources into a SIEM can be a challenging task within SIEM migrations...
+Let's be honest, injesting logs from multiple data sources into a SIEM can be a challenging task within SIEM migrations...
 
-You need to identify all the data soruces within the organisation, collate a list of every single log type, figure out how you are going to handle migration of threat detection rules, its a sticky one. 
+You need to identify all the data soruces within an organisation, collate a list of every single log type, determine the best injestion workflow, figure out how you are going to handle migration of threat detection rules etc... its a sticky one. 
 
 I've created this github repo to outline some of the methods which can be leveraged for log injestion into your new SIEM. 
 
@@ -24,15 +24,9 @@ typically (in my opinion) there are 4 ways to get your logs into Chronicle SIEM.
 In this repo, we're gonna foucs on **GCP Injestion API** and **Cloud Bucket Sync**. 
 
 ### GCP Injestion API
-> * **GCP Injestion API** is when..*
+> * **GCP Injestion API** is when you use Google Cloud Platform's API to directly send log data and security events to Chronicle for analysis and storage. This method allows for real-time or near real-time data ingestion, enabling quick detection and response to potential security threats.*
 ### Feed/Bucket Syncs
-> * **Feed/Bucket Syncs** is when...*
-
-
-
-
-
-
+> * **Feed/Bucket Syncs** are when Chronicle periodically checks and retrieves data from a designated cloud storage bucket (like Google Cloud Storage) where log files or other security-relevant data are stored. This method is useful for ingesting large volumes of historical data or when low latency real-time ingestion is not required.*
 
 **Direct Injestion from GCP** and **Chronicle Forwarders/Collectorsc** will be covered in another repo soon. 
 

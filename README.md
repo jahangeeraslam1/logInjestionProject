@@ -73,7 +73,7 @@ Have a look at this repo in the following order to grasp how to undertake Log In
 
 
 
-## 🚀 Getting Started
+# 🚀 Getting Started
 
 1. Clone the repo
 2. Set up your Google Cloud credentials in your CLI

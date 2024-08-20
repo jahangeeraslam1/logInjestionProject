@@ -25,7 +25,7 @@ This script uses a list of sample log types e.g. INFO, WARNING, ERROR and a list
 Random values are chosen from both these lists and are combined with the timestamp to create a JSON log.
 
 New JSON logs are appended to the file at the specified interval at the following method in main():
-```
+```python
 time.sleep()
 ```
 ### 2. Log-Watcher.py
@@ -47,8 +47,8 @@ Why Redis:
 
 In a production Chronicle environment, it might use a more robust solution like Apache Kafka or Google Cloud Pub/Sub, but for this local example Redis illustrates the concept of event-driven architecture well and has minimal overhead.
 
-``` 
-Remember to start the redis-server before running the code.
+``` python
+#Remember to start the redis-server before running the code.
 
 ```
 ### 4. Log-Subscriber.py

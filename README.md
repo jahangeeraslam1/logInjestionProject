@@ -19,14 +19,14 @@ typically (in my opinion) there are 4 ways to get your logs into Chronicle SIEM.
  - Direct Injestion from GCP
  - Chronicle Forwarders/Collectors
  - GCP Injestion API
- - Cloud Bucket Sync
+ - Feed/Bucket Syncs
 
 In this repo, we're gonna foucs on **GCP Injestion API** and **Cloud Bucket Sync**. 
 
 ### GCP Injestion API
 > * **GCP Injestion API** is when..*
-### Cloud Bucket Sync
-> * **Cloud Bucket Sync** is when...*
+### Feed/Bucket Syncs
+> * **Feed/Bucket Syncs** is when...*
 
 
 
@@ -36,15 +36,15 @@ In this repo, we're gonna foucs on **GCP Injestion API** and **Cloud Bucket Sync
 
 **Direct Injestion from GCP** and **Chronicle Forwarders/Collectorsc** will be covered in another repo soon. 
 
-## Repo Guide
+# Repo Guide
 
 Have a look at this repo in the following order to grasp how to undertake Log Injestion into Chornicle SIEM. 
 
-#### section1 - Event Driven Architecture  
+## section1 - Event Driven Architecture  
  
  - explains event driven arechitecutre concepts and why it is useful for SIEM log injestion
 
-#### section2 - REDIS Log Gathering System 
+## section2 - REDIS Log Gathering System 
  
  section2a: log injestion setup
  - creates sample logs to work with
@@ -58,24 +58,24 @@ Have a look at this repo in the following order to grasp how to undertake Log In
  - ensures duplicate logs are not processed 
 
 
-#### section3 - REDIS Log Gathering System with GCS 
+## section3 - REDIS Log Gathering System with GCS 
 
  - set up GCS bucket via Terraform to hold our logs
  - create workflow to auto send logs to this gcp bucket 
 
 
-### section4 - Google Pub/Sub Log Gathering System with GCS 
+## section4 - Google Pub/Sub Log Gathering System with GCS 
  
  - switches from using REDIS to Google Pub/Sub 
  - sets up Google Pub/Sub pipelines via Terraform
- - sends logs from subscriber to GCS bucket in batches
+ - sends logs from subscriber to GCS bucket
 
-### section5 - Google Pub/Sub Log Gathering System with Injestion API 
+## section5 - Google Pub/Sub Log Gathering System with Injestion API 
  
  - still uses Google Pub/Sub instead of REDIS
  - leverages Terraform to set up Google Pub/Sub
+ - covers injestion API set up + authentication
  - sends logs from subscriber to Injestion API
- - covers API set up + authentication
 
 
 
@@ -89,7 +89,7 @@ Have a look at this repo in the following order to grasp how to undertake Log In
 6. Launch the log watcher: `python log_watcher.py`
 7. Run the log subscriber: `python log_subscriber.py`
 
-> *Don't forget to launch the redis-server when working with section1,section2 and section3 and update auth/port details if needed*
+> *Don't forget to launch the redis-server when working with section1,section2 and section3 and update authentication/port details if needed*
 
 
 ## 

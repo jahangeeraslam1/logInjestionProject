@@ -7,7 +7,7 @@ In this section, I'll cover how to:
 
 ## Architecture
 
-![Image Alt text](images/section2-diagram.png)
+![Image Alt text](../images/section3-diagram.png)
 
 ## Repo Overview
 
@@ -39,7 +39,7 @@ bucket_name = "section3-gcs-bucket" # specifies bucket name to send logs to
 
 The following two methods were added to our log-subscrber.py script:
 
-```
+```python
 def setup_gcs_client():
     return storage.Client()
 
@@ -64,7 +64,7 @@ We also added some form of parsing here to our log before sending it to the GCS 
 
 When working with GoogleSecOps, normalization of logs can take place here (converting raw logs into UDM formatting) or manipulating the log data into a format you want.
 
-```
+```python
 def parse_log(gcs_client,bucket_name,log_entry):
     
     

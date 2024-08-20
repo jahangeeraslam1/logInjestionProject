@@ -32,7 +32,17 @@ These logs should be present in the correct format for the API endpoint to under
 
 Max Message size is 1MB, so when sending large amounts of messages, you have to be aware of the payload (log entries) and set up batching accordingly.
 
-## DEMO Ingestion
+
+
+
+## Architecture 
+
+Slightly messy but I hope you get the idea. Will transform to draw.io diagram soon.
+
+![Image Alt text](../images/section5-diagram.png)
+
+
+## Code for Ingestion API Subscriber
 
 We have provided the code below to authenticate with the Ingestion API and incorporate it within our log-subscriber.py file. This will not be run due to not having access to a test Chronicle instance, but it has been provided to show how the Ingestion API should be configured to work with a Google Pub/Sub subscriber.
 
@@ -69,7 +79,8 @@ def create_authorized_session():
 
 As mentioned above, we must structure the log being sent to Chronicle in the appropriate format. 
 
-The log_type chosen here will ensure it is being parsed by Chronicle parsers properly, so please select one carefully from the list here...
+The log_type chosen here will ensure it is being parsed by Chronicle parsers properly, so please select one carefully from the list here... [Google Cloud Chronicle Ingestion API Documentation](https://cloud.google.com/chronicle/docs/reference/ingestion-api)
+
 
 ```python
 def send_to_chronicle(session, log_entry):

@@ -10,7 +10,7 @@ In this section, I'll cover how to:
 
 ## Architecture
 
-![Image Alt text](images/section2-diagram.png)
+![Image Alt text](../images/section2-diagram.png)
 
 ## Repo Overview
 

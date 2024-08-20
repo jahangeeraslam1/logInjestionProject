@@ -15,7 +15,7 @@ class LogHandler(FileSystemEventHandler):
         
         #sets up the connection to Pub/Sub
         self.publisher = pubsub_v1.PublisherClient() #create a pubsub client
-        self.topic_path = self.publisher.topic_path("chronicle-project-432815", "chronicle-injestion-topic")  #specifiy the topic we'll be publishing our messages to (REPLACES REDIS CHANNELS)
+        self.topic_path = self.publisher.topic_path("chronicle-project-432815", "section4-chronicle-injestion-topic")  #specifiy the topic we'll be publishing our messages to (REPLACES REDIS CHANNELS)
 
        
     def on_modified(self, event): 

@@ -21,7 +21,7 @@ resource "google_pubsub_topic" "section4-chronicle-injestion-topic" {
 
 resource "google_pubsub_subscription" "section4-chronicle-injestion_sub" {
   name  = "section4-chronicle-injestion_sub" #name of subscibrption in GCP
-  topic = google_pubsub_topic.chronicle-injestion-topic.name
+  topic = google_pubsub_topic.section4-chronicle-injestion-topic.name
 
   ack_deadline_seconds = 60 #max time for subscriber to acknowledge message
   

@@ -47,7 +47,7 @@ def parse_log(log_entry):
 def main():
     
     subscriber = pubsub_v1.SubscriberClient() #pub/sub subscriber client setup 
-    subscription_path = subscriber.subscription_path("chronicle-project-432815", "chronicle-injestion_sub") #define subscipriton path
+    subscription_path = subscriber.subscription_path("chronicle-project-432815", "section4-chronicle-injestion_sub") #define subscipriton path
     
     print(f"Google Pub Sub Subscriber started. Currently subscribed to {subscription_path}")
     

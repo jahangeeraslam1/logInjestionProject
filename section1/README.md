@@ -55,6 +55,6 @@ Batch and Stream Processing: An event-driven architecture allows you to easily i
 
 
 
-#basic diagram  for our project
+## basic diagram below using REDIS
 
 ![Image Alt text](../images/basic-diagram.png)
